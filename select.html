@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+<body style = "background-color:powderblue;">
 <head>
 <link rel="stylesheet" type="text/css" href="select.css"/>
 </head>
@@ -16,43 +16,48 @@
 });
 </script>
 
-<body>
-</body>
-<div class = "tabs">
-  <ul class = "tab-links">
-    <li class = "active"><a href="#tab1">HOME</a></li>
-    <li><a href="#tab2">HOUSE INFO</a></li>
-    <li><a href="#tab3">OTHER</a></li>
-  </ul>
 
+
+<div class = "tabs">
+  <ul class = "tab-links"><font face = "calibri" size = "6">
+    <li class = "active"><a href="#tab1">Home</a></li>
+    <li><a href="#tab2">House</a></li>
+    <li><a href="#tab3">Other</a></li>
+  </font></ul>
+
+<body>
+    <img src = "https://www.google.com/maps/vt/data=_bkzihFQl1eWXL5w1UeLx04Iwj0V-1_FrJCIQa_uFaX2WEppkl0KWqVQa8A-YAdXFOnZmu5EcPE2Pz3lYi3rYlhnI-9w1h9MT5cLJgOhHrrBKSCKx9zdxwn_8FAeeUfqsALZ_YBw4eLxfrOh_2JHtiBuhxM9EfXlcRaMIILfecl6Hw9rGY_ZVP5HG2KWs8ghc8c1IyGfFqIWBF6DPcYqAg" alt = "Map">
 <div class = "tab-content">
   <div id = "tab1" class = "tab active">
     {{with $1:=.PageCoordinates}}
-    <p> What are your coordinates? </p>
+    <p style = "color: blue;"> What are your coordinates? </p>
 
       <form action="/selected" method="post">
           {{range $1}}
             <input type="text" name={{.Name}}> {{.Text}}
           {{end}}
+          <br>
+          <br>
           <input type="submit" value="Submit">
       </form>
-      <div id="googleMap" class="w3-grayscale" style="width:100%;height:450px;"></div>
+      <br>
     {{end}}
 
 
   {{with $2:=.Answer}}
-    <p>Your coordinates are {{$2}}</p>
+    <p style = "color: salmon"><font face = "cambria" size = "5">Your closest city is {{$2}}</font></p>
   {{end}}
 
 </div>
 
 <div id="tab2" class = "tab">
-  <p>HOME STUFF</p>
+  <p style = "color: green"><font face = "verdana">Home stuff</font></p>
 </div>
 
 <div id="tab3" class = "tab">
-  <p>OTHER STUFF</p>
+  <p style = "color: green"><font face = "verdana">Other stuff</font></p>
 </div>
 </div>
 </div>
+</body>
 </html>
