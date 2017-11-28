@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="select.css"/>
+</head>
+
+<script type='text/javascript'>
+ $(document).ready(function() {
+   $('input[name=coordinaten]').change(function(){
+     $('form').submit();
+   });
+   $('input[name=coordinates]').change(function(){
+     $('form').submit();
+   });
+});
+</script>
+<script>
+function myMap()
+{
+  myCenter=new google.maps.LatLng(41.878114, -87.629798);
+  var mapOptions= {
+    center:myCenter,
+    zoom:12, scrollwheel: false, draggable: false,
+    mapTypeId:google.maps.MapTypeId.ROADMAP
+  };
+  var map=new google.maps.Map(document.getElementById("googleMap"),mapOptions);
+
+  var marker = new google.maps.Marker({
+    position: myCenter,
+  });
+  marker.setMap(map);
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu-916DdpKAjTmJNIgngS6HL_kDIKU0aU&callback=myMap"></script>
+<body>
+</body>
+<div class = "tabs">
+  <ul class = "tab-links">
+    <li class = "active"><a href="#tab1">HOME</a></li>
+    <li><a href="#tab2">HOUSE INFO</a></li>
+    <li><a href="#tab3">OTHER</a></li>
+  </ul>
+
+<div class = "tab-content">
+  <div id = "tab1" class = "tab active">
+    {{with $1:=.PageCoordinates}}
+    <p> What are your coordinates? </p>
+
+      <form action="/selected" method="post">
+          {{range $1}}
+            <input type="text" name={{.Name}}> {{.Text}}
+          {{end}}
+          <input type="submit" value="Submit">
+      </form>
+      <div id="googleMap" class="w3-grayscale" style="width:100%;height:450px;"></div>
+    {{end}}
+
+
+  {{with $2:=.Answer}}
+    <p>Your coordinates are {{$2}}</p>
+  {{end}}
+
+</div>
+
+<div id="tab2" class = "tab">
+  <p>HOME STUFF</p>
+</div>
+
+<div id="tab3" class = "tab">
+  <p>OTHER STUFF</p>
+</div>
+</div>
+</div>
+</html>
