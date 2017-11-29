@@ -29,15 +29,25 @@ type Coordinates struct {
 	Text  string
 }
 
+type House struct {
+	Name  string
+	Value float64
+	Text  string
+}
+
 type PageVariables struct {
 	PageTitle       string
 	PageCoordinates []Coordinates
+	PageHouseSize   []House
 	Answer          string
+	Value           float64
 }
 
 func main() {
 	http.HandleFunc("/", DisplayCoordinates)
 	http.HandleFunc("/selected", UserSelected)
+	//http.HandleFunc("/house", DisplayHouse)
+	//http.HandleFunc("/houseselected", UserHouse)
 	log.Fatal(http.ListenAndServe(getPort(), nil))
 }
 
@@ -56,10 +66,14 @@ func DisplayCoordinates(w http.ResponseWriter, r *http.Request) {
 		Coordinates{"coordinaten", 0, "North"},
 		Coordinates{"coordinatew", 0, "West"},
 	}
+	MyHouse := []House{
+		House{"housesize", 0, "Size"},
+	}
 
 	MyPageVariables := PageVariables{
 		PageTitle:       Title,
 		PageCoordinates: MyCoordinates,
+		PageHouseSize:   MyHouse,
 	}
 
 	t, err := template.ParseFiles("select.html") //parse the html file homepage.html
@@ -80,11 +94,15 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 	northcoord, _ := strconv.ParseFloat(r.Form.Get("coordinaten"), 64)
 	westcoord, _ := strconv.ParseFloat(r.Form.Get("coordinatew"), 64)
 	closestcity := ClosestCity(cityData, northcoord, westcoord)
+	houseSize, _ := strconv.ParseFloat(r.Form.Get("housesize"), 64)
+	solarOutput := SolarOutput(closestcity, cityData, "horizontal", houseSize)
+	solarOutput = float64(int(solarOutput*100)) / 100
 
-	Title := "Your coordinates"
+	Title := "Your Home"
 	MyPageVariables := PageVariables{
 		PageTitle: Title,
 		Answer:    closestcity,
+		Value:     solarOutput,
 	}
 
 	// generate page by passing page variables into template
@@ -98,6 +116,57 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 		log.Print("template executing error: ", err) //log it
 	}
 }
+
+/*
+func DisplayHouse(w http.ResponseWriter, r *http.Request) {
+
+	Title := "Solar Energy"
+	MyHouse := []House{
+		House{"housesize", 0, "Size"},
+	}
+
+	MyPageVariables := PageVariables{
+		PageTitle:     Title,
+		PageHouseSize: MyHouse,
+	}
+
+	t, err := template.ParseFiles("select.html") //parse the html file homepage.html
+	if err != nil {                              // if there is an error
+		log.Print("template parsing error: ", err) // log it
+	}
+
+	err = t.Execute(w, MyPageVariables) //execute the template and pass it the HomePageVars struct to fill in the gaps
+	if err != nil {                     // if there is an error
+		log.Print("template executing error: ", err) //log it
+	}
+
+}
+
+func UserHouse(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	cityData := MakeCityMap("energy.csv")
+	houseSize, _ := strconv.ParseFloat(r.Form.Get("housesize"), 64)
+	//cityName := ClosestCity(cityData, northcoord, westcoord)
+	solarOutput := SolarOutput("Boston", cityData, "horizontal", houseSize)
+
+	Title := "Your coordinates"
+	MyPageVariables := PageVariables{
+		PageTitle: Title,
+		Value:     solarOutput,
+	}
+
+	// generate page by passing page variables into template
+	t, err := template.ParseFiles("select.html") //parse the html file homepage.html
+	if err != nil {                              // if there is an error
+		log.Print("template parsing error: ", err) // log it
+	}
+
+	err = t.Execute(w, MyPageVariables) //execute the template and pass it the HomePageVars struct to fill in the gaps
+	if err != nil {                     // if there is an error
+		log.Print("template executing error: ", err) //log it
+	}
+}
+*/
 
 func ReadFile(filename string) []string {
 	//reads file and makes a line for each file
@@ -160,7 +229,24 @@ func ClosestCity(cityData map[string]City, userCoordN, userCoordW float64) strin
 		if cityDistance < distance {
 			distance = cityDistance
 			closestCityName = city
+
 		}
 	}
 	return closestCityName
+}
+
+func SolarOutput(cityName string, cityData map[string]City, angleType string, houseSize float64) float64 {
+	var radiation float64
+	//241.5479 meters squared as solar panel area (average house size)
+	//assume standard 15% efficiency
+	//0.75 default performance ratio
+	// E = Solar Panel Area * solar panel efficiency * radiation * performance ratio
+	if angleType == "horizontal" {
+		radiation = cityData[cityName].solarRad
+	} else if angleType == "optimal" {
+		radiation = cityData[cityName].optRad
+	}
+	houseSize *= 0.092903 //convert square feet to square meters
+	energyOutput := houseSize * 15 * radiation * 0.75
+	return energyOutput
 }

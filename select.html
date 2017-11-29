@@ -13,51 +13,59 @@
    $('input[name=coordinates]').change(function(){
      $('form').submit();
    });
+   $('input[name=housesize]').change(function(){
+     $('form').submit();
+   });
 });
 </script>
 
+<nav>
+<ul>
+  <li><a class="active" href="/">Home</a></li>
+</ul>
+</nav>
 
 
-<div class = "tabs">
-  <ul class = "tab-links"><font face = "calibri" size = "6">
-    <li class = "active"><a href="#tab1">Home</a></li>
-    <li><a href="#tab2">House</a></li>
-    <li><a href="#tab3">Other</a></li>
-  </font></ul>
 
 <body>
     <img src = "https://etc.usf.edu/maps/pages/800/815/815.jpg" alt = "Map">
-<div class = "tab-content">
-  <div id = "tab1" class = "tab active">
+
     {{with $1:=.PageCoordinates}}
+
     <p style = "color: blue;"> What are your coordinates? </p>
 
       <form action="/selected" method="post">
           {{range $1}}
-            <input type="text" name={{.Name}}> {{.Text}}
+            <input type="text" name={{.Name}} id = "input"> {{.Text}}
           {{end}}
           <br>
+          <p style = "color: blue;"> What is your house size? </p>
+          <input type="text" name="housesize" > Size
           <br>
           <input type="submit" value="Submit">
       </form>
-      <br>
-    {{end}}
+      {{end}}
 
 
+      <script type="text/javascript">
+      function display() {
+          if ( {{.Answer}} == "Albuquerque") {
+              document.getElementById('albuquerque').style.display = 'block';
+      }
+    }
+      </script>
   {{with $2:=.Answer}}
-    <p style = "color: salmon"><font face = "cambria" size = "5">Your closest city is {{$2}}</font></p>
+    <p style = "color: gray"><font face = "arial">Your closest city is {{$2}}.</font>
+    {{end}}
+  {{with $4:=.Value}}
+   <p style = "color: gray"><font face = "arial">Your expected solar output is {{$4}} kwh. </font></p>
   {{end}}
-
-</div>
-
-<div id="tab2" class = "tab">
-  <p style = "color: green"><font face = "verdana">Home stuff</font></p>
-</div>
-
-<div id="tab3" class = "tab">
-  <p style = "color: green"><font face = "verdana">Other stuff</font></p>
-</div>
-</div>
-</div>
+<br>
+<br>
+<!--Albuquerque--><IMG STYLE="display: none; position:absolute; TOP:150px; LEFT:170px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "albuquerque">
+<script type="text/javascript">
+   display();
+ </script>
 </body>
+
 </html>
