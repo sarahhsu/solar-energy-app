@@ -132,13 +132,14 @@
   {{with $7:=.Optimal}}
   <span style = "color: blue"><font face = "arial">it {{$7}} to get solar panels.</font></span>
   <br>
-  <p><font face = "arial">Would you like to view potential solar panel options?</font></p>
+  <p><font face = "arial">Click continue to view solar panel options, or click back to return to go back.</font></p>
   <form>
-    <input type="submit" value="Continue">
+    <input action="action" onclick="window.history.go(-1); return false;" type="button" value="Continue" />
+    <input action="action" onclick="window.history.go(-1); return false;" type="button" value="Back" />
   </form>
   {{end}}
   <!--Ask user he wants to continue and have him click a button and if he does want to continue
-  have some radio buttons where he can see what his output would be for each company
+  have some radio buttons where he can see what his output would be for each kind of solar panel
   in his area-->
 <br>
 <br>
