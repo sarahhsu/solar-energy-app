@@ -20,62 +20,157 @@
 </script>
 
 <nav>
-<ul>
+<ul><font face = "arial">
   <li><a class="active" href="/">Home</a></li>
+</font>
 </ul>
 </nav>
 
 <script>
   function checkInput() {
-    if (parseInt(document.getElementById('input').value, 10) < 0 || parseInt(document.getElementById('input').value, 10) > 180) {
-      document.getElementById('error').style.display = 'block';
+    if (parseInt(document.getElementById('northinput').value, 10) < 0 || parseInt(document.getElementById('northinput').value, 10) > 90) {
+      document.getElementById('coorderror').style.display = 'block';
+    } else if (parseInt(document.getElementById('westinput').value, 10) < 0 || parseInt(document.getElementById('westinput').value, 10) > 180){
+      document.getElementById('coorderror').style.display = 'block';
+    } else if (parseInt(document.getElementById('sizeinput').value, 10) < 0 || parseInt(document.getElementById('sizeinput').value, 10) > 100000){
+      document.getElementById('sizeerror').style.display = 'block';
     } else {
-      document.getElementById('error').style.display = 'none';
+      document.getElementById('coorderror').style.display = 'none';
+      document.getElementById('sizeerror').style.display = 'none';
     };
   }
+
 </script>
 
 <body>
     <img src = "https://etc.usf.edu/maps/pages/800/815/815.jpg" alt = "Map">
 
-    {{with $1:=.PageCoordinates}}
-
+{{with $1:=.PageCoordinates}}
     <p style = "color: blue;"> What are your coordinates? </p>
-
+    <!--Ask user for coordinates and house size-->
       <form action="/selected" method="post">
-          {{range $1}}
-            <input type="text" name={{.Name}} id = "input" onkeyup= "checkInput();"> {{.Text}}
-          {{end}}
+          <input type="text" name="coordinaten" id = "northinput" onkeyup= "checkInput();"> Longitude
+          <input type="text" name="coordinatew" id = "westinput" onkeyup= "checkInput();"> Latitude
           <br>
-          <p style = "display: none; color:red" id = "error"> Please enter valid coordinate.</p>
+          <p style = "display: none; color:red" id = "coorderror"> Please enter valid coordinate.</p>
           <p style = "color: blue;"> What is your house size? </p>
-          <input type="text" name="housesize" > Size
+          <input type="text" name="housesize" id = "sizeinput" onkeyup= "checkInput();" > Size (Square Feet)
           <br>
-          <input type="submit" value="Submit" >
+          <p style = "display: none; color:red" id = "sizeerror"> Please enter valid house size.</p>
+          <br>
+          <input type="submit" value="Submit" id = "submit">
       </form>
-      {{end}}
+{{end}}
 
 
-
-      <script type="text/javascript">
-      function display() {
-          if ( {{.Answer}} == "Albuquerque") {
-              document.getElementById('albuquerque').style.display = 'block';
-            } else if ( {{.Answer}} == "Anaheim") {
-              document.getElementById('anaheim').style.display = 'block';
-            }
+<script type="text/javascript">
+//Function to display the right marker for the user's city.
+  function display() {
+    if ( {{.Answer}} == "Albuquerque") {
+        document.getElementById('albuquerque').style.display = 'block';
+      } else if ( {{.Answer}} == "Anaheim") {
+        document.getElementById('anaheim').style.display = 'block';
+      } else if ( {{.Answer}} == "Arlington") {
+        document.getElementById('arlington').style.display = 'block';
+      } else if ( {{.Answer}} == "Atlanta") {
+        document.getElementById('atlanta').style.display = 'block';
+      } else if ( {{.Answer}} == "Austin") {
+        document.getElementById('austin').style.display = 'block';
+      } else if ( {{.Answer}} == "Bakersfield") {
+        document.getElementById('bakersfield').style.display = 'block';
+      } else if ( {{.Answer}} == "Baltimore") {
+        document.getElementById('baltimore').style.display = 'block';
+      } else if ( {{.Answer}} == "Baton Rouge") {
+        document.getElementById('batonrouge').style.display = 'block';
+      } else if ( {{.Answer}} == "Birmingham") {
+        document.getElementById('birmingham').style.display = 'block';
+      } else if ( {{.Answer}} == "Boise") {
+        document.getElementById('boise').style.display = 'block';
+      } else if ( {{.Answer}} == "Boston") {
+        document.getElementById('boston').style.display = 'block';
+      } else if ( {{.Answer}} == "Buffalo") {
+        document.getElementById('buffalo').style.display = 'block';
+      } else if ( {{.Answer}} == "Chandler") {
+        document.getElementById('chandler').style.display = 'block';
+      } else if ( {{.Answer}} == "Chesapeake") {
+        document.getElementById('chesapeake').style.display = 'block';
+      } else if ( {{.Answer}} == "Chicago") {
+        document.getElementById('chicago').style.display = 'block';
+      } else if ( {{.Answer}} == "Chula Vista") {
+        document.getElementById('chulavista').style.display = 'block';
+      } else if ( {{.Answer}} == "Cincinnati") {
+        document.getElementById('cincinnati').style.display = 'block';
+      } else if ( {{.Answer}} == "Cleveland") {
+        document.getElementById('cleveland').style.display = 'block';
+      } else if ( {{.Answer}} == "Colorado Springs") {
+        document.getElementById('coloradosprings').style.display = 'block';
+      } else if ( {{.Answer}} == "Columbus") {
+        document.getElementById('columbus').style.display = 'block';
+      } else if ( {{.Answer}} == "Corpus Christi") {
+        document.getElementById('columbus').style.display = 'block';
+      } else if ( {{.Answer}} == "Dallas") {
+        document.getElementById('dallas').style.display = 'block';
+      }
     }
-      </script>
+</script>
+
   {{with $2:=.Answer}}
     <p style = "color: gray"><font face = "arial">Your closest city is {{$2}}.</font>
     {{end}}
-  {{with $4:=.Value}}
-   <p style = "color: gray"><font face = "arial">Your expected solar output is {{$4}} kwh. </font></p>
+  {{with $3:=.Value}}
+   <p style = "color: gray"><font face = "arial">For your house size, your expected solar output is {{$3}} kwh per month. </font></p>
   {{end}}
+  {{with $4:=.Value2}}
+   <p style = "color: gray"><font face = "arial">For optimal output, use an angle of {{$4}} degrees. </font></p>
+  {{end}}
+  {{with $5:=.Value3}}
+   <p style = "color: gray"><font face = "arial">The optimal output you could get is {{$5}} kwh per month. </font></p>
+  {{end}}
+  {{with $6:=.Usage}}
+  <span style = "color: blue"><font face = "arial">Since the average usage in your area for your house size is {{$6}} kwh per month,</font></span>
+  {{end}}
+  {{with $7:=.Optimal}}
+  <span style = "color: blue"><font face = "arial">it {{$7}} to get solar panels.</font></span>
+  <br>
+  <p><font face = "arial">Would you like to continue?</font></p>
+  <form>
+    <input type="submit" value="Continue">
+  </form>
+  {{end}}
+  <!--Ask user he wants to continue and have him click a button and if he does want to continue
+  have some radio buttons where he can see what his output would be for each company
+  in his area-->
 <br>
 <br>
+
+
+<!--MAP MARKERS-->
 <!--Albuquerque--><IMG STYLE="display: none; position:absolute; TOP:366px; LEFT:269px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "albuquerque">
 <!--Anaheim--><IMG STYLE="display: none; position:absolute; TOP:375px; LEFT:87px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "anaheim">
+<!--Arlington--><IMG STYLE="display: none; position:absolute; TOP:423px; LEFT:430px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "arlington">
+<!--Atlanta--><IMG STYLE="display: none; position:absolute; TOP:390px; LEFT:637px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "atlanta">
+<!--Aurora--><IMG STYLE="display: none; position:absolute; TOP:280px; LEFT:307px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "aurora">
+<!--Austin--><IMG STYLE="display: none; position:absolute; TOP:470px; LEFT:418px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "austin">
+<!--Bakersfield--><IMG STYLE="display: none; position:absolute; TOP:329px; LEFT:69px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "bakersfield">
+<!--Baltimore--><IMG STYLE="display: none; position:absolute; TOP:260px; LEFT:742px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "baltimore">
+<!--Baton Rouge--><IMG STYLE="display: none; position:absolute; TOP:463px; LEFT:528px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "batonrouge">
+<!--Birmingham--><IMG STYLE="display: none; position:absolute; TOP:399px; LEFT:597px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "birmingham">
+<!--Boise--><IMG STYLE="display: none; position:absolute; TOP:174px; LEFT:152px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "boise">
+<!--Boston--><IMG STYLE="display: none; position:absolute; TOP:174px; LEFT:809px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "boston">
+<!--Buffalo--><IMG STYLE="display: none; position:absolute; TOP:190px; LEFT:692px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "buffalo">
+<!--Chandler--><IMG STYLE="display: none; position:absolute; TOP:392px; LEFT:185px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "chandler">
+<!--Charlotte--><IMG STYLE="display: none; position:absolute; TOP:354px; LEFT:689px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "charlotte">
+<!--Chesapeake--><IMG STYLE="display: none; position:absolute; TOP:308px; LEFT:760px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "chesapeake">
+<!--Chicago--><IMG STYLE="display: none; position:absolute; TOP:235px; LEFT:567px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "chicago">
+<!--Chula Vista--><IMG STYLE="display: none; position:absolute; TOP:390px; LEFT:88px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "chulavista">
+<!--Cincinnati--><IMG STYLE="display: none; position:absolute; TOP:282px; LEFT:621px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "cincinnati">
+<!--Cleveland--><IMG STYLE="display: none; position:absolute; TOP:227px; LEFT:660px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "cleveland">
+<!--Colorado Springs--><IMG STYLE="display: none; position:absolute; TOP:296px; LEFT:305px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "coloradosprings">
+<!--Columbus--><IMG STYLE="display: none; position:absolute; TOP:267px; LEFT:645px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "columbus">
+<!--Corpus Christi--><IMG STYLE="display: none; position:absolute; TOP:529px; LEFT:413px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "corpuschristi">
+<!--Dallas--><IMG STYLE="display: none; position:absolute; TOP:423px; LEFT:430px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "dallas">
+
+
 <script type="text/javascript">
    display();
  </script>

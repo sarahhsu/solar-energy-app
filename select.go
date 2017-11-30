@@ -41,13 +41,15 @@ type PageVariables struct {
 	PageHouseSize   []House
 	Answer          string
 	Value           float64
+	Value2          float64
+	Value3          float64
+	Usage           float64
+	Optimal         string
 }
 
 func main() {
 	http.HandleFunc("/", DisplayCoordinates)
 	http.HandleFunc("/selected", UserSelected)
-	//http.HandleFunc("/house", DisplayHouse)
-	//http.HandleFunc("/houseselected", UserHouse)
 	log.Fatal(http.ListenAndServe(getPort(), nil))
 }
 
@@ -97,12 +99,22 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 	houseSize, _ := strconv.ParseFloat(r.Form.Get("housesize"), 64)
 	solarOutput := SolarOutput(closestcity, cityData, "horizontal", houseSize)
 	solarOutput = float64(int(solarOutput*100)) / 100
+	optAngle := OptAngle(cityData, closestcity)
+	optEnergy := OptEnergy(cityData, closestcity, houseSize)
+	optEnergy = float64(int(optEnergy*100)) / 100
+	avgUsage := AverageEnergy(cityData, closestcity) * houseSize
+	avgUsage = float64(int(avgUsage*100)) / 100
+	recommendation := IsItOptimal(avgUsage, solarOutput)
 
 	Title := "Your Home"
 	MyPageVariables := PageVariables{
 		PageTitle: Title,
 		Answer:    closestcity,
 		Value:     solarOutput,
+		Value2:    optAngle,
+		Value3:    optEnergy,
+		Usage:     avgUsage,
+		Optimal:   recommendation,
 	}
 
 	// generate page by passing page variables into template
@@ -116,57 +128,6 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 		log.Print("template executing error: ", err) //log it
 	}
 }
-
-/*
-func DisplayHouse(w http.ResponseWriter, r *http.Request) {
-
-	Title := "Solar Energy"
-	MyHouse := []House{
-		House{"housesize", 0, "Size"},
-	}
-
-	MyPageVariables := PageVariables{
-		PageTitle:     Title,
-		PageHouseSize: MyHouse,
-	}
-
-	t, err := template.ParseFiles("select.html") //parse the html file homepage.html
-	if err != nil {                              // if there is an error
-		log.Print("template parsing error: ", err) // log it
-	}
-
-	err = t.Execute(w, MyPageVariables) //execute the template and pass it the HomePageVars struct to fill in the gaps
-	if err != nil {                     // if there is an error
-		log.Print("template executing error: ", err) //log it
-	}
-
-}
-
-func UserHouse(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	cityData := MakeCityMap("energy.csv")
-	houseSize, _ := strconv.ParseFloat(r.Form.Get("housesize"), 64)
-	//cityName := ClosestCity(cityData, northcoord, westcoord)
-	solarOutput := SolarOutput("Boston", cityData, "horizontal", houseSize)
-
-	Title := "Your coordinates"
-	MyPageVariables := PageVariables{
-		PageTitle: Title,
-		Value:     solarOutput,
-	}
-
-	// generate page by passing page variables into template
-	t, err := template.ParseFiles("select.html") //parse the html file homepage.html
-	if err != nil {                              // if there is an error
-		log.Print("template parsing error: ", err) // log it
-	}
-
-	err = t.Execute(w, MyPageVariables) //execute the template and pass it the HomePageVars struct to fill in the gaps
-	if err != nil {                     // if there is an error
-		log.Print("template executing error: ", err) //log it
-	}
-}
-*/
 
 func ReadFile(filename string) []string {
 	//reads file and makes a line for each file
@@ -229,7 +190,6 @@ func ClosestCity(cityData map[string]City, userCoordN, userCoordW float64) strin
 		if cityDistance < distance {
 			distance = cityDistance
 			closestCityName = city
-
 		}
 	}
 	return closestCityName
@@ -248,5 +208,32 @@ func SolarOutput(cityName string, cityData map[string]City, angleType string, ho
 	}
 	houseSize *= 0.092903 //convert square feet to square meters
 	energyOutput := houseSize * 15 * radiation * 0.75
-	return energyOutput
+	return energyOutput / 12
+}
+
+func OptEnergy(cityData map[string]City, cityName string, houseSize float64) float64 {
+	optOutput := SolarOutput(cityName, cityData, "optimal", houseSize)
+	return optOutput
+}
+
+func OptAngle(cityData map[string]City, cityName string) float64 {
+	data := cityData[cityName]
+	optAngle := data.optAng
+	return optAngle
+}
+
+func AverageEnergy(cityData map[string]City, cityName string) float64 {
+	data := cityData[cityName]
+	averageEnergy := data.avgEnergy
+	return averageEnergy / 2000
+}
+
+func IsItOptimal(avgUsage float64, solarOutput float64) string {
+	solarOutput = solarOutput
+	deficit := solarOutput - avgUsage
+	if deficit <= 0 {
+		return "is not recommended"
+	} else {
+		return "is recommended"
+	}
 }
