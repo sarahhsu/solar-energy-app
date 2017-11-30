@@ -25,7 +25,15 @@
 </ul>
 </nav>
 
-
+<script>
+  function checkInput() {
+    if (parseInt(document.getElementById('input').value, 10) < 0 || parseInt(document.getElementById('input').value, 10) > 180) {
+      document.getElementById('error').style.display = 'block';
+    } else {
+      document.getElementById('error').style.display = 'none';
+    };
+  }
+</script>
 
 <body>
     <img src = "https://etc.usf.edu/maps/pages/800/815/815.jpg" alt = "Map">
@@ -36,22 +44,26 @@
 
       <form action="/selected" method="post">
           {{range $1}}
-            <input type="text" name={{.Name}} id = "input"> {{.Text}}
+            <input type="text" name={{.Name}} id = "input" onkeyup= "checkInput();"> {{.Text}}
           {{end}}
           <br>
+          <p style = "display: none; color:red" id = "error"> Please enter valid coordinate.</p>
           <p style = "color: blue;"> What is your house size? </p>
           <input type="text" name="housesize" > Size
           <br>
-          <input type="submit" value="Submit">
+          <input type="submit" value="Submit" >
       </form>
       {{end}}
+
 
 
       <script type="text/javascript">
       function display() {
           if ( {{.Answer}} == "Albuquerque") {
               document.getElementById('albuquerque').style.display = 'block';
-      }
+            } else if ( {{.Answer}} == "Anaheim") {
+              document.getElementById('anaheim').style.display = 'block';
+            }
     }
       </script>
   {{with $2:=.Answer}}
@@ -62,7 +74,8 @@
   {{end}}
 <br>
 <br>
-<!--Albuquerque--><IMG STYLE="display: none; position:absolute; TOP:150px; LEFT:170px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "albuquerque">
+<!--Albuquerque--><IMG STYLE="display: none; position:absolute; TOP:366px; LEFT:269px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "albuquerque">
+<!--Anaheim--><IMG STYLE="display: none; position:absolute; TOP:375px; LEFT:87px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "anaheim">
 <script type="text/javascript">
    display();
  </script>
