@@ -21,6 +21,7 @@
  </nav>
 
  <script>
+  //Error message for if house size entered is greater than 100000 or less than 0.
    function checkInput() {
      if (parseInt(document.getElementById('housesizeinput').value, 10) < 0 || parseInt(document.getElementById('housesizeinput').value, 10) > 100000){
        document.getElementById('sizeerror').style.display = 'block';
@@ -35,6 +36,8 @@
    <header><font size = "6">Heat Map</font></header>
    <!--Displays the USA map-->
      <img src = "https://etc.usf.edu/maps/pages/800/815/815.jpg" alt = "Map">
+     <!--Asks user for their desired house size and submits form
+     back to server. Error if house size is too big or negative-->
      {{with $1 := .PageHouseSize}}
      <p style = "color: blue;"> Enter your desired house size: </p>
      <form action="/displayheatmap" method = "post">
@@ -47,6 +50,8 @@
      {{end}}
 
 <script type="text/javascript">
+//Changes the colors of the dot markers
+//and displays them on the map.
 function ChangeColors(){
   var colors = {{.Map}};
   document.getElementById('albuquerque').style.color = colors[0];
@@ -247,7 +252,7 @@ function ChangeColors(){
       document.getElementById('winstonsalem').style.display = 'block';
     }
 </script>
-<!--MAP MARKERS-->
+<!--MAP MARKERS (DOTS)-->
 <!--Albuquerque--><div style="display: none; position:absolute; TOP:422px; LEFT:279px" id = "albuquerque"><font size = "5000"> . </font></div>
 <!--Anaheim--><div style="display: none; position:absolute; TOP:431px; LEFT:97px"  id = "anaheim"><font size = "5000"> . </font></div>
 <!--Arlington--><div style="display: none; position:absolute; TOP:479px; LEFT:440px" id = "arlington"><font size = "5000"> . </font></div>
@@ -347,8 +352,11 @@ function ChangeColors(){
 <!--Wichita--><div style="display: none; position:absolute; TOP:382px; LEFT:428px"  id = "wichita"><font size = "5000"> . </font></div>
 <!--Winston-Salem--><div style="display: none; position:absolute; TOP:390px; LEFT:718px"  id = "winstonsalem"><font size = "5000"> . </font></div>
 <script>
+//Changes the colors of the markers and displays them according
+//to their recommendation.
 ChangeColors();
 </script>
+<!--This section displays a key to correspond with the heat map.-->
 <div>
   <br>
   <span style = "font-weight:bold"> Key: </span><br>
@@ -367,6 +375,7 @@ ChangeColors();
   </form>
 </div>
 <script>
+//Function to display the list of cities depending on user selection.
 function DisplayList(num){
   if (num == 1){
     document.getElementById('greenlist').style.display = 'block';
@@ -387,7 +396,9 @@ function DisplayList(num){
   };
 }
 </script>
-
+<!--This section will give a list of cities that fit the choice
+that the user makes: highly recommended, recommended, not recommended.
+This is based on their house size.-->
 <div id = "greenlist" style = "display: none">
   <p>{{.GreenPercent}}% of the cities are highly recommended for this house size. </p>
   <p>These are the cities where solar energy is highly recommended:</p>
@@ -408,8 +419,11 @@ function DisplayList(num){
   {{ range $4 := .RedList}}
     <p style = "color: gray">{{$4}}</p>
   {{end}}
+
 </div>
 
 </body>
+
+<span>Created by: Sarah Hsu and Caryn Willis</span>
 
 </html>

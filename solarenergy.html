@@ -52,6 +52,7 @@
 <!--Asks user for coordinates and house size.-->
 {{with $1:=.PageCoordinates}}
     <p style = "color: blue;"> What are your coordinates? </p>
+    <p>North: -90 to 90 degrees, West: -180 to 180 degrees.</p>
       <form action="/selected" method="post">
           <input type="text" name="coordinaten" id = "northinput" onkeyup= "checkInput();"> Longitude
           <input type="text" name="coordinatew" id = "westinput" onkeyup= "checkInput();"> Latitude
