@@ -103,7 +103,7 @@ func DisplayCoordinates(w http.ResponseWriter, r *http.Request) {
 		PageHouseSize:   MyHouse,
 	}
 
-	t, err := template.ParseFiles("select.html") //parse the html file homepage.html
+	t, err := template.ParseFiles("solarenergy.html") //parse the html file homepage.html
 	if err != nil {                              // if there is an error
 		log.Print("template parsing error: ", err) // log it
 	}
@@ -156,7 +156,7 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// generate page by passing page variables into template
-	t, err := template.ParseFiles("select.html") //parse the html file homepage.html
+	t, err := template.ParseFiles("solarenergy.html") //parse the html file homepage.html
 	if err != nil {                              // if there is an error
 		log.Print("template parsing error: ", err) // log it
 	}
