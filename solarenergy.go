@@ -250,6 +250,12 @@ func ClosestCity(cityData map[string]City, userCoordN, userCoordW float64) strin
 	distance := 10000.00
 	closestCityName := ""
 	var cityDistance float64
+	if userCoordN < 0 {
+		userCoordN*=-1
+	}
+	if userCoordW < 0 {
+		userCoordW*=-1
+	}
 	for city, data := range cityData {
 		cityDistance = math.Sqrt(math.Pow((userCoordN-data.coordN), 2) + math.Pow((userCoordW-data.coordW), 2))
 		if cityDistance < distance {

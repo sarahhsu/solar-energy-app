@@ -30,9 +30,9 @@
 //Checks user input to make sure it is not too high or low.
 //Will display temporary error message if it is.
   function checkInput() {
-    if (parseInt(document.getElementById('northinput').value, 10) < 0 || parseInt(document.getElementById('northinput').value, 10) > 90) {
+    if (parseInt(document.getElementById('northinput').value, 10) < -90 || parseInt(document.getElementById('northinput').value, 10) > 90) {
       document.getElementById('coorderror').style.display = 'block';
-    } else if (parseInt(document.getElementById('westinput').value, 10) < 0 || parseInt(document.getElementById('westinput').value, 10) > 180){
+    } else if (parseInt(document.getElementById('westinput').value, 10) < -180 || parseInt(document.getElementById('westinput').value, 10) > 180){
       document.getElementById('coorderror').style.display = 'block';
     } else if (parseInt(document.getElementById('sizeinput').value, 10) < 0 || parseInt(document.getElementById('sizeinput').value, 10) > 100000){
       document.getElementById('sizeerror').style.display = 'block';
