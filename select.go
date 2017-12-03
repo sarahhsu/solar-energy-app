@@ -47,10 +47,10 @@ type PageVariables struct {
 	PageTitle       string
 	PageCoordinates []Coordinates
 	PageHouseSize   []House
-	Answer          string
-	Value           float64
-	Value2          float64
-	Value3          float64
+	MyCity          string
+	Output          float64
+	OptAngle        float64
+	OptOutput       float64
 	Usage           float64
 	Optimal         string
 	InstCost        float64
@@ -58,11 +58,20 @@ type PageVariables struct {
 	NumPanels       []int
 	PanelCost       []int
 	Recommendation  []string
+	Map             []string
+	RedList         []string
+	YellowList      []string
+	GreenList       []string
+	RedPercent      float64
+	YellowPercent   float64
+	GreenPercent    float64
 }
 
 func main() {
 	http.HandleFunc("/", DisplayCoordinates)
 	http.HandleFunc("/selected", UserSelected)
+	http.HandleFunc("/heatmap", DisplayHouseSize)
+	http.HandleFunc("/displayheatmap", UserInteracts)
 	log.Fatal(http.ListenAndServe(getPort(), nil))
 }
 
@@ -129,15 +138,14 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 	instCost := InstallationCost(cityData, closestcity)
 	numPanels, panelCost := CalcCostBrand(solarOutput, houseSize, cityData, closestcity, solarPanels)
 	preferences := Preferences(panelCost, solarPanels, closestcity, cityData, houseSize)
-	fmt.Println(preferences)
 
 	Title := "Your Home"
 	MyPageVariables := PageVariables{
 		PageTitle:      Title,
-		Answer:         closestcity,
-		Value:          solarOutput,
-		Value2:         optAngle,
-		Value3:         optEnergy,
+		MyCity:         closestcity,
+		Output:         solarOutput,
+		OptAngle:       optAngle,
+		OptOutput:      optEnergy,
 		Usage:          avgUsage,
 		Optimal:        recommendation,
 		InstCost:       instCost,
@@ -190,10 +198,6 @@ func MakeCityMap(filename string) map[string]City {
 		cityData[cityName] = MakeCity(cityData, items)
 	}
 	delete(cityData, "")
-	keys := make([]string, 0)
-	for key, _ := range cityData {
-		keys = append(keys, key)
-	}
 	return cityData
 }
 
