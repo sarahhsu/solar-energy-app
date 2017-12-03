@@ -27,6 +27,8 @@
 </nav>
 
 <script>
+//Checks user input to make sure it is not too high or low.
+//Will display temporary error message if it is.
   function checkInput() {
     if (parseInt(document.getElementById('northinput').value, 10) < 0 || parseInt(document.getElementById('northinput').value, 10) > 90) {
       document.getElementById('coorderror').style.display = 'block';
@@ -45,9 +47,9 @@
 <body>
   <header><font size = "6">Solar Energy</font></header>
   <!--Displays the USA map-->
-    <img src = "https://etc.usf.edu/maps/pages/800/815/815.jpg" alt = "Map">
-<!--Asks user for coordinates and house size.-->
+  <img src = "https://etc.usf.edu/maps/pages/800/815/815.jpg" alt = "Map">
 
+<!--Asks user for coordinates and house size.-->
 {{with $1:=.PageCoordinates}}
     <p style = "color: blue;"> What are your coordinates? </p>
       <form action="/selected" method="post">
@@ -259,10 +261,6 @@
       } else if ( {{.MyCity}} == "Winston-Salem") {
         document.getElementById('winstonsalem').style.display = 'block';
       }
-    }
-
-    function displaytext() {
-      document.getElementbyId('choosesolar').style.display = 'block';
     }
 
 </script>
