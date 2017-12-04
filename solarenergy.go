@@ -47,6 +47,7 @@ type PageVariables struct {
 	PageTitle       string
 	PageCoordinates []Coordinates
 	PageHouseSize   []House
+	PageRoofSize		float64
 	MyCity          string
 	Output          float64
 	OptAngle        float64
@@ -58,6 +59,7 @@ type PageVariables struct {
 	NumPanels       []int
 	PanelCost       []int
 	Recommendation  []string
+	Percentage			float64
 	Map             []string
 	RedList         []string
 	YellowList      []string
@@ -97,10 +99,13 @@ func DisplayCoordinates(w http.ResponseWriter, r *http.Request) {
 		House{"housesize", 0, "Size"},
 	}
 
+	var MyRoof float64
+
 	MyPageVariables := PageVariables{
 		PageTitle:       Title,
 		PageCoordinates: MyCoordinates,
 		PageHouseSize:   MyHouse,
+		PageRoofSize: 	 MyRoof,
 	}
 
 	t, err := template.ParseFiles("solarenergy.html") //parse the html file homepage.html
@@ -125,18 +130,20 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 	northcoord, _ := strconv.ParseFloat(r.Form.Get("coordinaten"), 64)
 	westcoord, _ := strconv.ParseFloat(r.Form.Get("coordinatew"), 64)
 	houseSize, _ := strconv.ParseFloat(r.Form.Get("housesize"), 64)
+	roofSize, _ := strconv.ParseFloat(r.Form.Get("roofsize"), 64)
 	closestcity := ClosestCity(cityData, northcoord, westcoord)
-	solarOutput := SolarOutput(closestcity, cityData, "horizontal", 15, houseSize)
+	solarOutput := SolarOutput(closestcity, cityData, "horizontal", 15, roofSize)
 	solarOutput = float64(int(solarOutput*100)) / 100
 	optAngle := OptAngle(cityData, closestcity)
-	optEnergy := OptEnergy(cityData, closestcity, 15, houseSize)
+	optEnergy := OptEnergy(cityData, closestcity, 15, roofSize)
 	optEnergy = float64(int(optEnergy*100)) / 100
 	avgUsage := AverageEnergy(cityData, closestcity) * houseSize
 	avgUsage = float64(int(avgUsage*100)) / 100
-	recommendation := IsItOptimal(avgUsage, solarOutput)
+	percentage, recommendation := IsItOptimal(avgUsage, solarOutput)
+	percentage = (float64(int(percentage*100)) / 100)*100
 	companylist := Companies(closestcity, cityData)
 	instCost := InstallationCost(cityData, closestcity)
-	numPanels, panelCost := CalcCostBrand(solarOutput, houseSize, cityData, closestcity, solarPanels)
+	numPanels, panelCost := CalcCostBrand(solarOutput, roofSize, cityData, closestcity, solarPanels)
 	preferences := Preferences(panelCost, solarPanels, closestcity, cityData, houseSize)
 
 	Title := "Your Home"
@@ -153,6 +160,7 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 		NumPanels:      numPanels,
 		PanelCost:      panelCost,
 		Recommendation: preferences,
+		Percentage:     percentage,
 	}
 
 	// generate page by passing page variables into template
@@ -300,19 +308,18 @@ func OptAngle(cityData map[string]City, cityName string) float64 {
 func AverageEnergy(cityData map[string]City, cityName string) float64 {
 	data := cityData[cityName]
 	averageEnergy := data.avgEnergy
-	return averageEnergy / 2000
+	return averageEnergy / 2600
 }
 
 //Gives a recommendation based on energy produced from solar panels and energy requirement.
-func IsItOptimal(avgUsage float64, solarOutput float64) string {
-	solarOutput = solarOutput
-	deficit := solarOutput - avgUsage
-	if deficit <= 0 {
-		return "is not recommended"
-	} else if deficit < 50 && deficit > 0 {
-		return "is recommended"
+func IsItOptimal(avgUsage float64, solarOutput float64) (float64, string) {
+	percentage := solarOutput/avgUsage
+	if percentage <= 0.60 {
+		return percentage, "is not recommended"
+	} else if percentage > .60 && percentage < .8 {
+		return percentage, "is recommended"
 	} else {
-		return "is highly recommended"
+		return percentage, "is highly recommended"
 	}
 }
 

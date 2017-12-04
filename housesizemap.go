@@ -11,6 +11,8 @@ import (
 func DisplayHouseSize(w http.ResponseWriter, r *http.Request) {
 	PageTitle := "Heat Map"
 
+	var MyRoof float64
+
 	MyHouse := []House{
 		House{"housesizeinput", 0, "Size"},
 	}
@@ -18,6 +20,7 @@ func DisplayHouseSize(w http.ResponseWriter, r *http.Request) {
 	PageVars := PageVariables{
 		PageTitle:     PageTitle,
 		PageHouseSize: MyHouse,
+		PageRoofSize:  MyRoof,
 	}
 
 	t, err := template.ParseFiles("housesizemap.html") //Parse the html file housesizemap.html
@@ -39,8 +42,9 @@ func UserInteracts(w http.ResponseWriter, r *http.Request) {
 	green := "green"
 	cityData := MakeCityMap("energy.csv")
 	houseSize, _ := strconv.ParseFloat(r.Form.Get("housesizeinput"), 64)
-	heatMap := MakeColorMarkers(cityData, houseSize)
-	mapColors := MakeColors("energy.csv", cityData, houseSize)
+	roofSize, _ := strconv.ParseFloat(r.Form.Get("roofsize"), 64)
+	heatMap := MakeColorMarkers(cityData, houseSize, roofSize)
+	mapColors := MakeColors("energy.csv", cityData, houseSize, roofSize)
 	redList := MakeList(heatMap, red)
 	yellowList := MakeList(heatMap, yellow)
 	greenList := MakeList(heatMap, green)
@@ -72,13 +76,15 @@ func UserInteracts(w http.ResponseWriter, r *http.Request) {
 }
 
 //Makes a map of color markers for each city based on chose house size and difference in output
-func MakeColorMarkers(cityData map[string]City, houseSize float64) map[string]string {
+func MakeColorMarkers(cityData map[string]City, houseSize, roofSize float64) map[string]string {
 	var output, avgEnergy float64
 	var mapColor string
 	colors := make(map[string]string)
 	for cityName, _ := range cityData {
-		output = SolarOutput(cityName, cityData, "horizontal", 15, houseSize)
+		output = SolarOutput(cityName, cityData, "horizontal", 15, roofSize)
+		output = float64(int(output*100)) / 100
 		avgEnergy = AverageEnergy(cityData, cityName) * houseSize
+		avgEnergy = float64(int(avgEnergy*100)) / 100
 		mapColor = MapColor(avgEnergy, output)
 		colors[cityName] = mapColor
 	}
@@ -87,11 +93,11 @@ func MakeColorMarkers(cityData map[string]City, houseSize float64) map[string]st
 
 //computes differece in energy and chooses color
 func MapColor(avgEnergy, energyOutput float64) string {
-	energyDiff := energyOutput - avgEnergy
+	percentage := energyOutput/avgEnergy
 	var color string
-	if energyDiff > 50 {
+	if percentage >= .8 {
 		color = "green"
-	} else if energyDiff >= 0 {
+	} else if percentage > 0.5 && percentage < 0.8 {
 		color = "yellow"
 	} else {
 		color = "red"
@@ -134,13 +140,13 @@ func MakeCityArray(filename string) []string {
 }
 
 //Make an array of colors based alphabetically.
-func MakeColors(filename string, cityData map[string]City, houseSize float64) []string {
+func MakeColors(filename string, cityData map[string]City, houseSize, roofSize float64) []string {
 	var output, avgEnergy float64
 	var mapColor string
 	cityNames := MakeCityArray(filename)
 	colors := make([]string, 0)
 	for _, cityName := range cityNames {
-		output = SolarOutput(cityName, cityData, "horizontal", 15, houseSize)
+		output = SolarOutput(cityName, cityData, "horizontal", 15, roofSize)
 		avgEnergy = AverageEnergy(cityData, cityName) * houseSize
 		mapColor = MapColor(avgEnergy, output)
 		if mapColor == "red" {

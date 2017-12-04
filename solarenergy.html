@@ -16,6 +16,9 @@
    $('input[name=housesize]').change(function(){
      $('form').submit();
    });
+   $('input[name=roofsize]').change(function(){
+     $('form').submit();
+   });
 });
 </script>
 
@@ -35,6 +38,8 @@
     } else if (parseInt(document.getElementById('westinput').value, 10) < -180 || parseInt(document.getElementById('westinput').value, 10) > 180){
       document.getElementById('coorderror').style.display = 'block';
     } else if (parseInt(document.getElementById('sizeinput').value, 10) < 0 || parseInt(document.getElementById('sizeinput').value, 10) > 100000){
+      document.getElementById('sizeerror').style.display = 'block';
+    } else if (parseInt(document.getElementById('roofinput').value, 10) < 0 || parseInt(document.getElementById('roofinput').value, 10) > 100000){
       document.getElementById('sizeerror').style.display = 'block';
     } else {
       document.getElementById('coorderror').style.display = 'none';
@@ -61,7 +66,10 @@
           <p style = "color: blue;"> What is your house size? </p>
           <input type="text" name="housesize" id = "sizeinput" onkeyup= "checkInput();" > Size (Square Feet)
           <br>
-          <p style = "display: none; color:red" id = "sizeerror"> Please enter valid house size.</p>
+          <p style = "color: blue;"> What is your roof size? </p>
+          <input type="text" name="roofsize" id = "roofinput" onkeyup= "checkInput();" > Size (Square Feet)
+          <br>
+          <p style = "display: none; color:red" id = "sizeerror"> Please enter valid size.</p>
           <br>
           <input type="submit" value="Submit" id = "submit">
       </form>
@@ -283,8 +291,11 @@ optimal output with optimal angle, avg usage with a recommendation-->
   {{with $6:=.Usage}}
   <span style = "color: blue">Since the average usage in your area for your house size is {{$6}} kwh per month,</span>
   {{end}}
-  {{with $7:=.Optimal}}
-  <span style = "color: blue">it {{$7}} to get solar panels.</span>
+  {{with $7:=.Percentage}}
+  <span style = "color: blue">and {{$7}}% of your energy would be covered by solar power, </span>
+  {{end}}
+  {{with $8:=.Optimal}}
+  <span style = "color: blue">it {{$8}} to get solar panels.</span>
   <br>
 
 <!--Next Section: Solar Panel Options. Outputs the companies in their area and compares pricing for panels.-->
@@ -296,8 +307,8 @@ optimal output with optimal angle, avg usage with a recommendation-->
   {{end}}
   <div style = "display: none" id = "choosesolar">
       <p>These solar installation companies serve your area: </p>
-    {{ range $8 := .Companies}}
-      <p style = "color: gray">{{$8}}</p>
+    {{ range $9 := .Companies}}
+      <p style = "color: gray">{{$9}}</p>
     {{end}}
   <p>Choose a solar panel brand to learn more: </p>
 <!--Displays radio buttons to the user, one for each brand.-->

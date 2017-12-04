@@ -10,6 +10,9 @@
    $('input[name=housesizeinput]').change(function(){
      $('form').submit();
    });
+   $('input[name=roofsize]').change(function(){
+     $('form').submit();
+   });
  });
  </script>
 
@@ -24,6 +27,8 @@
   //Error message for if house size entered is greater than 100000 or less than 0.
    function checkInput() {
      if (parseInt(document.getElementById('housesizeinput').value, 10) < 0 || parseInt(document.getElementById('housesizeinput').value, 10) > 100000){
+       document.getElementById('sizeerror').style.display = 'block';
+     } else if (parseInt(document.getElementById('roofinput').value, 10) < 0 || parseInt(document.getElementById('roofinput').value, 10) > 100000){
        document.getElementById('sizeerror').style.display = 'block';
      } else {
        document.getElementById('sizeerror').style.display = 'none';
@@ -43,7 +48,10 @@
      <form action="/displayheatmap" method = "post">
        <input type="text" name="housesizeinput" id = "housesizeinput" onkeyup= "checkInput();" > Size (Square Feet)
        <br>
-       <p style = "display: none; color:red" id = "sizeerror"> Please enter valid house size.</p>
+       <p style = "color: blue;"> What is your desired roof size? </p>
+       <input type="text" name="roofsize" id = "roofinput" onkeyup= "checkInput();" > Size (Square Feet)
+       <br>
+       <p style = "display: none; color:red" id = "sizeerror"> Please enter house size.</p>
        <br>
        <input type="submit" value="Submit" id = "submit">
      </form>
@@ -363,11 +371,11 @@ ChangeColors();
   <span style = "font-weight:bold"> Key: </span><br>
   <br>
   <span style = "background-color: green">Green</span>
-  <span> : Highly Recommended</span><br>
+  <span> : Highly Recommended (over 80% of energy can be solar)</span><br>
   <span style = "background-color: #FFD700">Yellow</span>
-  <span> : Recommended</span><br>
+  <span> : Recommended (between 50% and 80% of energy can be solar)</span><br>
   <span style = "background-color: red">Red</span>
-  <span> : Recommended</span><br>
+  <span> : Not Recommended (under 50% of energy can be solar)</span><br>
   <p> Click to find out recommendations for solar power for your desired house size.</p>
   <form method = "post">
       <input type = "radio" id = "highrec" name = "recommendation" value = "highrec" onclick = "DisplayList(1)"> Highly Recommended
