@@ -413,8 +413,8 @@ function DisplayList(num){
 that the user makes: highly recommended, recommended, not recommended.
 This is based on their house size.-->
 <div id = "greenlist" style = "display: none">
-  <p>{{.GreenPercent}}% of the cities are highly recommended for this house size. </p>
-  <p style = "color: blue">These are the cities where solar energy is highly recommended:</p>
+  <p style = "color: blue">{{.GreenPercent}}% of the cities are highly recommended for this house size. </p>
+  <p >These are the cities where solar energy is highly recommended:</p>
   {{ range $3 := .GreenList}}
     <p style = "color: darkslategray">&nbsp;&nbsp;{{$3}}</p>
   {{end}}
