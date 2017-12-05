@@ -48,14 +48,14 @@
      <!--Asks user for their desired house size and submits form
      back to server. Error if house size is too big or negative-->
      {{with $1 := .PageHouseSize}}
-     <p style = "color: blue;"> Enter your desired house size: </p>
+     <p style = "color: blue;"> What is your desired house size? </p>
      <form action="/displayheatmap" method = "post">
        <input type="text" name="housesizeinput" id = "housesizeinput" onkeyup= "checkInput();" > Size (Square Feet)
        <br>
        <p style = "color: blue;"> What is your desired roof size? </p>
        <input type="text" name="roofsize" id = "roofinput" onkeyup= "checkInput();" > Size (Square Feet)
        <br>
-       <p style = "display: none; color:red" id = "sizeerror"> Please enter house size.</p>
+       <p style = "display: none; color:red" id = "sizeerror"> Please enter valid size.</p>
        <br>
        <input type="submit" value="Submit" id = "submit">
      </form>
