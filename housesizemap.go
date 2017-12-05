@@ -1,3 +1,8 @@
+/*Authors: Sarah Hsu and Caryn Willis
+Description: This program takes in roof and house size and creates
+a visual of the United States with color coded recommendations for
+each city.*/
+
 package main
 
 import (
@@ -8,6 +13,7 @@ import (
 	"strings"
 )
 
+//This section asks the user for their house and roof size.
 func DisplayHouseSize(w http.ResponseWriter, r *http.Request) {
 	PageTitle := "Heat Map"
 
@@ -35,6 +41,10 @@ func DisplayHouseSize(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//This section is where the user can look at their results based on their input.
+//It will display a map based on recommendation (based on their %of energy
+//covered) and also give the cities which fall into each recommendation
+//category.
 func UserInteracts(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	red := "red"
@@ -91,9 +101,9 @@ func MakeColorMarkers(cityData map[string]City, houseSize, roofSize float64) map
 	return colors
 }
 
-//computes differece in energy and chooses color
+//Computes differece in energy and chooses color
 func MapColor(avgEnergy, energyOutput float64) string {
-	percentage := energyOutput/avgEnergy
+	percentage := energyOutput / avgEnergy
 	var color string
 	if percentage >= .8 {
 		color = "green"
@@ -105,7 +115,7 @@ func MapColor(avgEnergy, energyOutput float64) string {
 	return color
 }
 
-//makes list of cities that have a certain color code
+//Makes list of cities that have a certain color code
 func MakeList(colors map[string]string, color string) []string {
 	cityList := make([]string, 0)
 	for cityName, mapColor := range colors {

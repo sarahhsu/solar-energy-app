@@ -1,10 +1,13 @@
+<!--Authors: Sarah Hsu and Caryn Willis
+Description: This file uses the program housesizemap.go to
+display to the user the map and corresponding colors.-->
 <!DOCTYPE html>
 <html>
 <body style = "background-color:lightskyblue;">
 <head>
 <title>Solar Energy</title>
 </head>
-
+<!--Submits the form to the server-->
 <script type='text/javascript'>
  $(document).ready(function() {
    $('input[name=housesizeinput]').change(function(){
@@ -15,7 +18,7 @@
    });
  });
  </script>
-
+<!--Navigation tabs (Right now the "Heat Map" tab is active)-->
  <nav>
  <ul>
    <font face = "palatino">
@@ -26,7 +29,8 @@
  </nav>
 
  <script>
-  //Error message for if house size entered is greater than 100000 or less than 0.
+  //Error message for if house or roof size entered is greater than 100000 or less than 0.
+  //Disappears unless the user is typing something wrong.
    function checkInput() {
      if (parseInt(document.getElementById('housesizeinput').value, 10) < 0 || parseInt(document.getElementById('housesizeinput').value, 10) > 100000){
        document.getElementById('sizeerror').style.display = 'block';
@@ -41,11 +45,12 @@
 
  <body>
  <font face = "palatino">
+   <!--Title and a short description-->
    <header style="display:inline-block; width: 5;"><font color = "darkblue" size = "6">&nbsp;&nbsp;&nbsp;&nbsp;Heat Map</font></header>
    <span><font face = "palatino" size = "3" color = "indigo">&nbsp;&nbsp;A tool to visualize recommendations across the country.</font><span>
    <!--Displays the USA map-->
      <img src = "https://etc.usf.edu/maps/pages/800/815/815.jpg" alt = "Map">
-     <!--Asks user for their desired house size and submits form
+     <!--Asks user for their desired house size and roof size and submits form
      back to server. Error if house size is too big or negative-->
      {{with $1 := .PageHouseSize}}
      <p style = "color: blue;"> What is your desired house size? </p>
@@ -264,7 +269,7 @@ function ChangeColors(){
       document.getElementById('winstonsalem').style.display = 'block';
     }
 </script>
-<!--MAP MARKERS (DOTS)-->
+<!--MAP MARKERS (DOTS) Changes colors based off of recommendations-->
 <!--Albuquerque--><div style="display: none; position:absolute; TOP:422px; LEFT:279px" id = "albuquerque"><font size = "5000"> . </font></div>
 <!--Anaheim--><div style="display: none; position:absolute; TOP:431px; LEFT:97px"  id = "anaheim"><font size = "5000"> . </font></div>
 <!--Arlington--><div style="display: none; position:absolute; TOP:479px; LEFT:440px" id = "arlington"><font size = "5000"> . </font></div>

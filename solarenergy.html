@@ -1,10 +1,14 @@
+<!--Authors: Sarah Hsu and Caryn Willis
+Description: This file uses the program solarenergy.go
+and displays to the user the information related to the
+solar panel installation in the home.-->
 <!DOCTYPE html>
 <html>
 <body style = "background-color:lightskyblue;">
 <head>
 <title>Solar Energy</title>
 </head>
-
+<!--Submits the form back to the server.-->
 <script type='text/javascript'>
  $(document).ready(function() {
    $('input[name=coordinaten]').change(function(){
@@ -21,7 +25,7 @@
    });
 });
 </script>
-
+<!--Navigation tabs (Currently the "Solar Energy" tab is active)-->
 <nav>
 <ul><font face = "palatino">
   <li><a class="active" href="/">Solar Energy</a></li>
@@ -32,6 +36,9 @@
 
 <script>
 //Checks user input to make sure it is not too high or low.
+//Checks house size, roof size, and coordinates to make sure it is within range
+//Coordinates ranged will be displayed in the page, but the house range is
+//0 to 100000 square feet (anything higher is not realistic)
 //Will display temporary error message if it is.
   function checkInput() {
     if (parseInt(document.getElementById('northinput').value, 10) < -90 || parseInt(document.getElementById('northinput').value, 10) > 90) {
@@ -51,13 +58,14 @@
 </script>
 
 <body>
+<!--Title and short description as a header-->
 <font face = "palatino">
   <header style="display:inline-block; width: 5;"><font color = "darkblue" face = "palatino" size = "6">&nbsp;&nbsp;&nbsp;&nbsp;Solar Energy</font></header>
   <span><font face = "palatino" size = "3" color = "indigo">&nbsp;&nbsp;A decision tool to help you decide whether or not to go solar.</font><span>
   <!--Displays the USA map-->
   <img src = "https://etc.usf.edu/maps/pages/800/815/815.jpg" alt = "Map">
 
-<!--Asks user for coordinates and house size.-->
+<!--Asks user for coordinates and house/roof size.-->
 {{with $1:=.PageCoordinates}}
     <p style = "color: blue;"> &nbsp;&nbsp;What are your coordinates? </p>
     <p>&nbsp;&nbsp;&nbsp;Range: -90 to 90 degrees (North), -180 to 180 degrees (West)</p>
@@ -278,7 +286,8 @@
 </script>
 
 <!--Output all the user's information: closest city, expected solar output in kwh
-optimal output with optimal angle, avg usage with a recommendation-->
+optimal output with optimal angle, avg usage, percentage
+of their energy covered with a recommendation-->
   {{with $2:=.MyCity}}
     <p style = "color: darkslategray">Your closest city is {{$2}}.</p>
     {{end}}
@@ -301,7 +310,8 @@ optimal output with optimal angle, avg usage with a recommendation-->
   <span style = "color: tomato">it {{$8}} to get solar panels.</span>
   <br>
 
-<!--Next Section: Solar Panel Options. Outputs the companies in their area and compares pricing for panels.-->
+<!--Next Section: Solar Panel Options. Outputs the companies in their area and compares
+pricing for panels (from a set of 6 most popular options).-->
   <p id = "options">Click continue to view solar panel options, or click back to start over.</p>
   <form>
     <input type = "button"  id = "continue" value = "Continue" onclick = "HideShowText()">
@@ -314,6 +324,7 @@ optimal output with optimal angle, avg usage with a recommendation-->
       <p style = "color: darkslategray">&nbsp;&nbsp;&nbsp;{{$9}}</p>
     {{end}}
   <p>Choose a solar panel brand to learn more: </p>
+
 <!--Displays radio buttons to the user, one for each brand.-->
   <form method = "post">
       <input type = "radio" id = "panel0" name = "panelName" value = "Suntech" onclick = "DisplayCost(0)"> Suntech
@@ -324,6 +335,7 @@ optimal output with optimal angle, avg usage with a recommendation-->
       <input type = "radio" id = "panel5" name = "panelName" value = "GrapeSolar250" onclick = "DisplayCost(5)"> GrapeSolar250
   </form>
 </div>
+
 <!--Tells the user how much installation, total cost, and num of panels for chosen brand-->
 <div style = "display:none" id = "panelchoice">
 <p style = "color: darkslategray">Installation will cost you ${{.InstCost}}.</p>
@@ -334,15 +346,17 @@ optimal output with optimal angle, avg usage with a recommendation-->
 <br>
 <span style = "color: darkslategray">Total Cost: $</span>
 <span style = "color: darkslategray" id = "totalcost"></span>
+
 <!--Next section: Gives user preferences: price, efficiency, or output and gives a recommendation.-->
-<p id = "preferenceoptions">Click continue to receive a brand recommendation based on preference, or click back to start over.</p>
+<p id = "preferenceoptions">Click continue to receive a solar panel brand recommendation based on preference, or click back to start over.</p>
 <form>
   <input type = "button"  id = "continue1" value = "Continue" onclick = "HideShowPreferences()">
   <input action="action" onclick="window.history.go(-1); return false;" id = "back2" type="button" value="Back" />
 </form>
 </div>
 <br>
-<!--Drop down menu style options for preferences-->
+
+<!--Drop down menu style options for preferences: most efficient, budget, most energy generated.-->
 <div style = "display: none" id = "choosepreference">
   <p>Choose which is the most important to you.</p>
 <select id = "drop_down" onchange = "ShowHideRec()">
@@ -354,19 +368,21 @@ optimal output with optimal angle, avg usage with a recommendation-->
 <br>
 <br>
 </div>
+
 <!--Output the recommended panel brand for chosen preference.-->
-<span style = "display: none" id = "mincost"> The lowest cost option is: </span>
+<span style = "display: none" id = "mincost"> The lowest cost panel brand option is: </span>
 <br>
 <span id = "mincost2"></span>
-<span style = "display: none" id = "maxoutput"> The highest energy output option is: </span>
+<span style = "display: none" id = "maxoutput"> The highest energy panel brand output option is: </span>
 <br>
 <span id = "maxoutput2"></span>
-<span style = "display: none" id = "maxefficiency"> The most efficient option is: </span>
+<span style = "display: none" id = "maxefficiency"> The most efficient panel brand option is: </span>
 <br>
 <span id = "maxefficiency2"></span>
 <br>
 
 <script type="text/javascript">
+
 //Hides the buttons and prompt text and shows the radio buttons.
 function HideShowText() {
   document.getElementById('choosesolar').style.display = 'block';
@@ -374,6 +390,7 @@ function HideShowText() {
   document.getElementById('back').style.display = 'none';
   document.getElementById('options').style.display = 'none';
 }
+
 //Displays the cost of the panels and number needed for the brand the user chooses.
 function DisplayCost(num){
   document.getElementById('panelchoice').style.display = 'block';
@@ -384,6 +401,7 @@ function DisplayCost(num){
   document.getElementById('panelnumber').innerHTML = numPanels[num];
   document.getElementById('totalcost').innerHTML = panelCost[num]+".";
 }
+
 //Hides the continue and back buttons and prompt text and shows the drop down menu
 //for preferences.
 function HideShowPreferences() {
@@ -392,6 +410,7 @@ function HideShowPreferences() {
   document.getElementById('back2').style.display = 'none';
   document.getElementById('preferenceoptions').style.display = 'none';
 }
+
 //Shows the recommended panel brand for the preference that they choose.
 function ShowHideRec() {
   var Preferences = {{.Recommendation}};
@@ -430,7 +449,7 @@ function ShowHideRec() {
 }
 </script>
 
-<!--MAP MARKERS-->
+<!--MAP MARKERS (uses an image for marker)-->
 <!--Albuquerque--><IMG STYLE="display: none; position:absolute; TOP:422px; LEFT:269px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "albuquerque">
 <!--Anaheim--><IMG STYLE="display: none; position:absolute; TOP:431px; LEFT:87px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "anaheim">
 <!--Arlington--><IMG STYLE="display: none; position:absolute; TOP:479px; LEFT:430px; WIDTH:50px; HEIGHT:50px" SRC="http://www.clker.com/cliparts/B/l/M/x/J/M/map-pin-red.svg"; id = "arlington">

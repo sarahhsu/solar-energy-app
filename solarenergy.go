@@ -1,3 +1,7 @@
+/*Authors: Sarah Hsu and Caryn Willis
+Description: This program takes in roof, house size, and coordinates
+to give to the user some useful information about
+installing solar panels in their home.*/
 package main
 
 import (
@@ -47,7 +51,7 @@ type PageVariables struct {
 	PageTitle       string
 	PageCoordinates []Coordinates
 	PageHouseSize   []House
-	PageRoofSize		float64
+	PageRoofSize    float64
 	MyCity          string
 	Output          float64
 	OptAngle        float64
@@ -59,7 +63,7 @@ type PageVariables struct {
 	NumPanels       []int
 	PanelCost       []int
 	Recommendation  []string
-	Percentage			float64
+	Percentage      float64
 	Map             []string
 	RedList         []string
 	YellowList      []string
@@ -105,11 +109,11 @@ func DisplayCoordinates(w http.ResponseWriter, r *http.Request) {
 		PageTitle:       Title,
 		PageCoordinates: MyCoordinates,
 		PageHouseSize:   MyHouse,
-		PageRoofSize: 	 MyRoof,
+		PageRoofSize:    MyRoof,
 	}
 
 	t, err := template.ParseFiles("solarenergy.html") //parse the html file homepage.html
-	if err != nil {                              // if there is an error
+	if err != nil {                                   // if there is an error
 		log.Print("template parsing error: ", err) // log it
 	}
 
@@ -140,7 +144,7 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 	avgUsage := AverageEnergy(cityData, closestcity) * houseSize
 	avgUsage = float64(int(avgUsage*100)) / 100
 	percentage, recommendation := IsItOptimal(avgUsage, solarOutput)
-	percentage = (float64(int(percentage*100)) / 100)*100
+	percentage = (float64(int(percentage*100)) / 100) * 100
 	companylist := Companies(closestcity, cityData)
 	instCost := InstallationCost(cityData, closestcity)
 	numPanels, panelCost := CalcCostBrand(solarOutput, roofSize, cityData, closestcity, solarPanels)
@@ -165,7 +169,7 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 
 	// generate page by passing page variables into template
 	t, err := template.ParseFiles("solarenergy.html") //parse the html file homepage.html
-	if err != nil {                              // if there is an error
+	if err != nil {                                   // if there is an error
 		log.Print("template parsing error: ", err) // log it
 	}
 
@@ -259,10 +263,10 @@ func ClosestCity(cityData map[string]City, userCoordN, userCoordW float64) strin
 	closestCityName := ""
 	var cityDistance float64
 	if userCoordN < 0 {
-		userCoordN*=-1
+		userCoordN *= -1
 	}
 	if userCoordW < 0 {
-		userCoordW*=-1
+		userCoordW *= -1
 	}
 	for city, data := range cityData {
 		cityDistance = math.Sqrt(math.Pow((userCoordN-data.coordN), 2) + math.Pow((userCoordW-data.coordW), 2))
@@ -313,7 +317,7 @@ func AverageEnergy(cityData map[string]City, cityName string) float64 {
 
 //Gives a recommendation based on energy produced from solar panels and energy requirement.
 func IsItOptimal(avgUsage float64, solarOutput float64) (float64, string) {
-	percentage := solarOutput/avgUsage
+	percentage := solarOutput / avgUsage
 	if percentage <= 0.60 {
 		return percentage, "is not recommended"
 	} else if percentage > .60 && percentage < .8 {
