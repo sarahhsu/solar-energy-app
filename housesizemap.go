@@ -58,9 +58,9 @@ func UserInteracts(w http.ResponseWriter, r *http.Request) {
 	redList := MakeList(heatMap, red)
 	yellowList := MakeList(heatMap, yellow)
 	greenList := MakeList(heatMap, green)
-	redPercentage := ColorPercent(heatMap, red)
-	yellowPercentage := ColorPercent(heatMap, yellow)
-	greenPercentage := ColorPercent(heatMap, green)
+	redPercentage := ColorPercent(heatMap, "red")
+	yellowPercentage := ColorPercent(heatMap, "yellow")
+	greenPercentage := ColorPercent(heatMap, "green")
 	Title := "House Size Map"
 
 	PageVars := PageVariables{
@@ -134,7 +134,7 @@ func ColorPercent(colors map[string]string, color string) float64 {
 			colorCount++
 		}
 	}
-	return float64((colorCount / 98) * 100)
+	return float64(int((float64(colorCount)/98)*1000)) / 10
 	//since there are 98 cities
 }
 
