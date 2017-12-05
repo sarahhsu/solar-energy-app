@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<body style = "background-color:powderblue;">
+<body style = "background-color:lightskyblue;">
 <head>
 <title>Solar Energy</title>
 </head>
@@ -23,9 +23,10 @@
 </script>
 
 <nav>
-<ul>
-  <li><a class="active" href="/">Home</a></li>
+<ul><font face = "palatino">
+  <li><a class="active" href="/">Solar Energy</a></li>
   <li><a href="heatmap">Heat Map</a></li>
+</font>
 </ul>
 </nav>
 
@@ -50,28 +51,30 @@
 </script>
 
 <body>
-  <header><font size = "6">Solar Energy</font></header>
+<font face = "palatino">
+  <header style="display:inline-block; width: 5;"><font color = "darkblue" face = "palatino" size = "6">&nbsp;&nbsp;&nbsp;&nbsp;Solar Energy</font></header>
+  <span><font face = "palatino" size = "3" color = "indigo">&nbsp;&nbsp;A decision tool to help you decide whether or not to go solar.</font><span>
   <!--Displays the USA map-->
   <img src = "https://etc.usf.edu/maps/pages/800/815/815.jpg" alt = "Map">
 
 <!--Asks user for coordinates and house size.-->
 {{with $1:=.PageCoordinates}}
-    <p style = "color: blue;"> What are your coordinates? </p>
-    <p>Range: -90 to 90 degrees (North), -180 to 180 degrees (West)</p>
+    <p style = "color: blue;"> &nbsp;&nbsp;What are your coordinates? </p>
+    <p>&nbsp;&nbsp;&nbsp;Range: -90 to 90 degrees (North), -180 to 180 degrees (West)</p>
       <form action="/selected" method="post">
-          <input type="text" name="coordinaten" id = "northinput" onkeyup= "checkInput();"> Longitude
-          <input type="text" name="coordinatew" id = "westinput" onkeyup= "checkInput();"> Latitude
+          &nbsp;&nbsp;<input type="text" name="coordinaten" id = "northinput" onkeyup= "checkInput();"> Longitude
+          &nbsp;&nbsp;<input type="text" name="coordinatew" id = "westinput" onkeyup= "checkInput();"> Latitude
           <br>
-          <p style = "display: none; color:red" id = "coorderror"> Please enter valid coordinate.</p>
-          <p style = "color: blue;"> What is your house size? </p>
-          <input type="text" name="housesize" id = "sizeinput" onkeyup= "checkInput();" > Size (Square Feet)
+          <p style = "display: none; color:red" id = "coorderror">&nbsp;&nbsp;&nbsp; Please enter valid coordinate.</p>
+          <p style = "color: blue;"> &nbsp;&nbsp;&nbsp;What is your house size? </p>
+          &nbsp;&nbsp;<input type="text" name="housesize" id = "sizeinput" onkeyup= "checkInput();" > Size (Square Feet)
           <br>
-          <p style = "color: blue;"> What is your roof size? </p>
-          <input type="text" name="roofsize" id = "roofinput" onkeyup= "checkInput();" > Size (Square Feet)
+          <p style = "color: blue;"> &nbsp;&nbsp;&nbsp;What is your roof size? </p>
+          &nbsp;&nbsp;<input type="text" name="roofsize" id = "roofinput" onkeyup= "checkInput();" > Size (Square Feet)
           <br>
-          <p style = "display: none; color:red" id = "sizeerror"> Please enter valid size.</p>
+          <p style = "display: none; color:red" id = "sizeerror"> &nbsp;&nbsp;&nbsp;Please enter valid size.</p>
           <br>
-          <input type="submit" value="Submit" id = "submit">
+          &nbsp;&nbsp;&nbsp;<input type="submit" value="Submit" id = "submit">
       </form>
 {{end}}
 
@@ -277,25 +280,25 @@
 <!--Output all the user's information: closest city, expected solar output in kwh
 optimal output with optimal angle, avg usage with a recommendation-->
   {{with $2:=.MyCity}}
-    <p style = "color: gray">Your closest city is {{$2}}.</p>
+    <p style = "color: darkslategray">Your closest city is {{$2}}.</p>
     {{end}}
   {{with $3:=.Output}}
-   <p style = "color: gray">For your house size, your expected solar output is {{$3}} kwh per month. </p>
+   <p style = "color: darkslategray">For your house size, your expected solar energy output is {{$3}} kwh per month. </p>
   {{end}}
   {{with $4:=.OptAngle}}
-   <p style = "color: gray">For optimal output, use an angle of {{$4}} degrees. </p>
+   <p style = "color: darkslategray">For optimal solar energy output, use an angle of {{$4}} degrees. </p>
   {{end}}
   {{with $5:=.OptOutput}}
-   <p style = "color: gray">The optimal output you could get is {{$5}} kwh per month.</p>
+   <p style = "color: darkslategray">The optimal solar energy output you could get is {{$5}} kwh per month.</p>
   {{end}}
   {{with $6:=.Usage}}
-  <span style = "color: blue">Since the average usage in your area for your house size is {{$6}} kwh per month,</span>
+  <span style = "color: blue">Since the average energy usage in your area for your house size is {{$6}} kwh per month,</span>
   {{end}}
   {{with $7:=.Percentage}}
   <span style = "color: blue">and {{$7}}% of your energy would be covered by solar power, </span>
   {{end}}
   {{with $8:=.Optimal}}
-  <span style = "color: blue">it {{$8}} to get solar panels.</span>
+  <span style = "color: tomato">it {{$8}} to get solar panels.</span>
   <br>
 
 <!--Next Section: Solar Panel Options. Outputs the companies in their area and compares pricing for panels.-->
@@ -307,8 +310,8 @@ optimal output with optimal angle, avg usage with a recommendation-->
   {{end}}
   <div style = "display: none" id = "choosesolar">
       <p>These solar installation companies serve your area: </p>
-    {{ range $9 := .Companies}}
-      <p style = "color: gray">{{$9}}</p>
+      {{ range $9 := .Companies}}
+      <p style = "color: darkslategray">&nbsp;&nbsp;&nbsp;{{$9}}</p>
     {{end}}
   <p>Choose a solar panel brand to learn more: </p>
 <!--Displays radio buttons to the user, one for each brand.-->
@@ -323,14 +326,14 @@ optimal output with optimal angle, avg usage with a recommendation-->
 </div>
 <!--Tells the user how much installation, total cost, and num of panels for chosen brand-->
 <div style = "display:none" id = "panelchoice">
-<p style = "color: gray">Installation will cost you ${{.InstCost}}.</p>
-<span style = "color: gray">You will need </span>
-<span style = "color: gray" id = "panelnumber"></span>
-<span style = "color: gray"> panels.</span>
+<p style = "color: darkslategray">Installation will cost you ${{.InstCost}}.</p>
+<span style = "color: darkslategray">You will need </span>
+<span style = "color: darkslategray" id = "panelnumber"></span>
+<span style = "color: darkslategray"> panels.</span>
 <br>
 <br>
-<span style = "color: gray">Total Cost: $</span>
-<span style = "color: gray" id = "totalcost"></span>
+<span style = "color: darkslategray">Total Cost: $</span>
+<span style = "color: darkslategray" id = "totalcost"></span>
 <!--Next section: Gives user preferences: price, efficiency, or output and gives a recommendation.-->
 <p id = "preferenceoptions">Click continue to receive a brand recommendation based on preference, or click back to start over.</p>
 <form>
@@ -353,10 +356,13 @@ optimal output with optimal angle, avg usage with a recommendation-->
 </div>
 <!--Output the recommended panel brand for chosen preference.-->
 <span style = "display: none" id = "mincost"> The lowest cost option is: </span>
+<br>
 <span id = "mincost2"></span>
 <span style = "display: none" id = "maxoutput"> The highest energy output option is: </span>
+<br>
 <span id = "maxoutput2"></span>
 <span style = "display: none" id = "maxefficiency"> The most efficient option is: </span>
+<br>
 <span id = "maxefficiency2"></span>
 <br>
 
@@ -528,9 +534,9 @@ function ShowHideRec() {
   //Marker of the city will display on the map.
    Display();
  </script>
-
+</font>
 </body>
 <br>
-<span>Created by: Sarah Hsu and Caryn Willis</span>
+<span><font size = "2" color = "#6959CD" face = "palatino">Created by: Sarah Hsu and Caryn Willis</font></span>
 
 </html>
