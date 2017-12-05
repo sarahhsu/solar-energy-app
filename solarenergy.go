@@ -63,7 +63,7 @@ type PageVariables struct {
 	NumPanels       []int
 	PanelCost       []int
 	Recommendation  []string
-	Percentage      float64
+	Percentage      int
 	Map             []string
 	RedList         []string
 	YellowList      []string
@@ -143,10 +143,11 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 	optEnergy = float64(int(optEnergy*100)) / 100
 	avgUsage := AverageEnergy(cityData, closestcity) * houseSize
 	avgUsage = float64(int(avgUsage*100)) / 100
-	percentage, recommendation := IsItOptimal(avgUsage, solarOutput)
-	percentage = (float64(int(percentage*100)) / 100) * 100
+	percent, recommendation := IsItOptimal(avgUsage, solarOutput)
+	percentage := int(percent * 100)
 	companylist := Companies(closestcity, cityData)
 	instCost := InstallationCost(cityData, closestcity)
+	instCost = float64(int(instCost*100)) / 100
 	numPanels, panelCost := CalcCostBrand(solarOutput, roofSize, cityData, closestcity, solarPanels)
 	preferences := Preferences(panelCost, solarPanels, closestcity, cityData, houseSize)
 
