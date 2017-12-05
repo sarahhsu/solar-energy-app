@@ -97,7 +97,7 @@ func MapColor(avgEnergy, energyOutput float64) string {
 	var color string
 	if percentage >= .8 {
 		color = "green"
-	} else if percentage > 0.5 && percentage < 0.8 {
+	} else if percentage > 0.6 && percentage < 0.8 {
 		color = "yellow"
 	} else {
 		color = "red"
