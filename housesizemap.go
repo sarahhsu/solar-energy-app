@@ -134,7 +134,7 @@ func ColorPercent(colors map[string]string, color string) float64 {
 			colorCount++
 		}
 	}
-	return float64(colorCount) * (100 / 98)
+	return float64((colorCount / 98) * 100)
 	//since there are 98 cities
 }
 
