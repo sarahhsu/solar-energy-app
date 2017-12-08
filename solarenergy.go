@@ -2,6 +2,10 @@
 Description: This program takes in roof, house size, and coordinates
 to give to the user some useful information about
 installing solar panels in their home.*/
+
+/*This file is written by Sarah Hsu, except functions MakeCity(),
+MakeCityMap(), and ReadFile() were written by Caryn Willis.*/
+
 package main
 
 import (
@@ -16,6 +20,10 @@ import (
 	"strings"
 )
 
+/*This is a city struct which stores all of the data for each city.
+It stores the coordinates, temperature, solar radiation (at flat angle),
+optimal angle, optimal radiation (at optimal angle), average energy usage,
+installation cost, and a slice of 3 company names for each city.*/
 type City struct {
 	coordN    float64
 	coordW    float64
@@ -28,6 +36,9 @@ type City struct {
 	companies []string
 }
 
+/* This is a panel struct which stores the information for each type of solar
+panel. We have chosen 6 panels for the user to choose from here, each with
+information on its efficiency (percentage), watts, panel area, and price.*/
 type Panel struct {
 	efficiency float64
 	watts      float64
@@ -35,52 +46,59 @@ type Panel struct {
 	price      float64
 }
 
+/*This is a coordinates struct which has a identifying name (for the web
+portion) , a value, and text (west or north) sections*/
 type Coordinates struct {
 	Name  string
 	Value float64
 	Text  string
 }
 
+/* This is a house struct which stores the identifying name (for the web
+portion), a size value, and a text (name).*/
 type House struct {
 	Name  string
 	Value float64
 	Text  string
 }
 
+/*This is the struct storing all of the variables needed to be displayed
+on the web app.*/
 type PageVariables struct {
-	PageTitle       string
-	PageCoordinates []Coordinates
-	PageHouseSize   []House
-	PageRoofSize    float64
-	MyCity          string
-	Output          float64
-	OptAngle        float64
-	OptOutput       float64
-	Usage           float64
-	Optimal         string
-	InstCost        float64
-	Companies       []string
-	NumPanels       []int
-	PanelCost       []int
-	Recommendation  []string
-	Percentage      int
-	Map             []string
-	RedList         []string
-	YellowList      []string
-	GreenList       []string
-	RedPercent      float64
-	YellowPercent   float64
-	GreenPercent    float64
+	PageTitle       string        //Title of the page
+	PageCoordinates []Coordinates //Coordinates of the user
+	PageHouseSize   []House       //House size of the user
+	PageRoofSize    float64       //Roof size of the user
+	MyCity          string        //City name that is closest to the user
+	Output          float64       //Expected solar energy output
+	OptAngle        float64       //Optimal angle for panels
+	OptOutput       float64       //Optimal solar energy output
+	Usage           float64       //Average energy usage
+	Optimal         string        //Is it optimal to install solar power? Gives recommendation.
+	InstCost        float64       //Installation cost
+	Companies       []string      //3 company names
+	NumPanels       []int         //Number of panels needed for each brand
+	PanelCost       []int         //Cost of panels for each brand
+	Recommendation  []string      //Recommendation for each of the user preferences (efficiency, cost, production)
+	Percentage      int           //Percentage that their energy is covered by solar
+	Map             []string      //Map colors for each city (red, yellow, green)
+	RedList         []string      //List of cities in red
+	YellowList      []string      //List of cities in yellow
+	GreenList       []string      //List of cities in green
+	RedPercent      float64       //Percentage of cities in red
+	YellowPercent   float64       //Percentage of cities in yellow
+	GreenPercent    float64       //Percentage of cities in green
 }
 
 func main() {
-	http.HandleFunc("/", DisplayCoordinates)
-	http.HandleFunc("/selected", UserSelected)
-	http.HandleFunc("/heatmap", DisplayHouseSize)
-	http.HandleFunc("/displayheatmap", UserInteracts)
+	http.HandleFunc("/", DisplayCoordinates)          //DisplayCoordinates() loads when called with / at the end of the URL
+	http.HandleFunc("/selected", UserSelected)        //UserSelected() will load after the form with / is submitted
+	http.HandleFunc("/heatmap", DisplayHouseSize)     //DisplayHouseSize() will load when URL is called with /heatmap, or click tab
+	http.HandleFunc("/displayheatmap", UserInteracts) //UserInteracts() will load after form with /heatmap is submitted
 	log.Fatal(http.ListenAndServe(getPort(), nil))
 }
 
+/*This function is to deployment to the web, or you can run it with localhost*/
 func getPort() string {
 	p := os.Getenv("PORT")
 	if p != "" {
@@ -112,14 +130,14 @@ func DisplayCoordinates(w http.ResponseWriter, r *http.Request) {
 		PageRoofSize:    MyRoof,
 	}
 
-	t, err := template.ParseFiles("solarenergy.html") //parse the html file homepage.html
-	if err != nil {                                   // if there is an error
-		log.Print("template parsing error: ", err) // log it
+	t, err := template.ParseFiles("solarenergy.html") //parse the html file solarenergy.html
+	if err != nil {
+		log.Print("template parsing error: ", err)
 	}
 
-	err = t.Execute(w, MyPageVariables) //execute the template and pass it the HomePageVars struct to fill in the gaps
-	if err != nil {                     // if there is an error
-		log.Print("template executing error: ", err) //log it
+	err = t.Execute(w, MyPageVariables) //execute the template and pass it the MyPageVariables
+	if err != nil {
+		log.Print("template executing error: ", err)
 	}
 
 }
@@ -128,13 +146,17 @@ func DisplayCoordinates(w http.ResponseWriter, r *http.Request) {
 //There are several different variables in use here to be able to interact
 //with.
 func UserSelected(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	r.ParseForm() //Parse the page for the variables needed
 	cityData := MakeCityMap("energy.csv")
 	solarPanels := MakeSolarMap("solar.csv")
-	northcoord, _ := strconv.ParseFloat(r.Form.Get("coordinaten"), 64)
-	westcoord, _ := strconv.ParseFloat(r.Form.Get("coordinatew"), 64)
-	houseSize, _ := strconv.ParseFloat(r.Form.Get("housesize"), 64)
-	roofSize, _ := strconv.ParseFloat(r.Form.Get("roofsize"), 64)
+	northcoord, err1 := strconv.ParseFloat(r.Form.Get("coordinaten"), 64)
+	ErrorMessage(err1, "north coordinate", northcoord)
+	westcoord, err2 := strconv.ParseFloat(r.Form.Get("coordinatew"), 64)
+	ErrorMessage(err2, "west coordinate", westcoord)
+	houseSize, err3 := strconv.ParseFloat(r.Form.Get("housesize"), 64)
+	ErrorMessage(err3, "house size", houseSize)
+	roofSize, err4 := strconv.ParseFloat(r.Form.Get("roofsize"), 64)
+	ErrorMessage(err4, "roof size", roofSize)
 	closestcity := ClosestCity(cityData, northcoord, westcoord)
 	solarOutput := SolarOutput(closestcity, cityData, "horizontal", 15, roofSize)
 	solarOutput = float64(int(solarOutput*100)) / 100
@@ -168,15 +190,14 @@ func UserSelected(w http.ResponseWriter, r *http.Request) {
 		Percentage:     percentage,
 	}
 
-	// generate page by passing page variables into template
-	t, err := template.ParseFiles("solarenergy.html") //parse the html file homepage.html
-	if err != nil {                                   // if there is an error
-		log.Print("template parsing error: ", err) // log it
+	t, err := template.ParseFiles("solarenergy.html") //parse the html file solarenergy.html
+	if err != nil {
+		log.Print("template parsing error: ", err)
 	}
 
-	err = t.Execute(w, MyPageVariables) //execute the template and pass it the HomePageVars struct to fill in the gaps
-	if err != nil {                     // if there is an error
-		log.Print("template executing error: ", err) //log it
+	err = t.Execute(w, MyPageVariables) //execute the template and pass it the MyPageVariables
+	if err != nil {
+		log.Print("template executing error: ", err)
 	}
 }
 
@@ -214,7 +235,7 @@ func MakeCityMap(filename string) map[string]City {
 	return cityData
 }
 
-//Creates a City object with its characteristics.
+//Creates a City object with its characteristics using City struct.
 func MakeCity(cityData map[string]City, items []string) City {
 	var city City
 	city.coordN, _ = strconv.ParseFloat(items[1], 64)
@@ -248,7 +269,7 @@ func MakeSolarMap(filename string) map[string]Panel {
 	return solarPanels
 }
 
-//Make a Solar Panel object.
+//Make a Solar Panel object using Panel struct.
 func MakePanel(solarPanels map[string]Panel, items []string) Panel {
 	var panel Panel
 	panel.efficiency, _ = strconv.ParseFloat(items[1], 64)
@@ -279,7 +300,7 @@ func ClosestCity(cityData map[string]City, userCoordN, userCoordW float64) strin
 	return closestCityName
 }
 
-//Calculates expected generated energy from solar panels. (kwh per month)
+//Calculates expected generated energy from solar panels. (in kwh per month)
 func SolarOutput(cityName string, cityData map[string]City, angleType string, efficiency, houseSize float64) float64 {
 	var radiation float64
 	//241.5479 meters squared as solar panel area (average house size)
@@ -386,7 +407,7 @@ func Preferences(panelCost []int, solarPanels map[string]Panel, cityName string,
 }
 
 //Converts index to panel brand name.
-func idxToPanel(idx int) string {
+func IdxToPanel(idx int) string {
 	switch idx {
 	case 0:
 		return "Suntech"
@@ -426,7 +447,7 @@ func FindMinCostPanel(panelCost []int) string {
 			minCostIDX = idx
 		}
 	}
-	minCostPanel := idxToPanel(minCostIDX)
+	minCostPanel := IdxToPanel(minCostIDX)
 	return minCostPanel
 }
 
@@ -440,7 +461,7 @@ func FindMostEfficient(efficiencyarray []float64) string {
 			mostEfficientIDX = idx
 		}
 	}
-	mostEfficientPanel := idxToPanel(mostEfficientIDX)
+	mostEfficientPanel := IdxToPanel(mostEfficientIDX)
 	return mostEfficientPanel
 }
 
@@ -455,6 +476,15 @@ func FindMaxOutput(efficiencyarray []float64, cityName string, cityData map[stri
 			maxIDX = i
 		}
 	}
-	maxOutputPanel := idxToPanel(maxIDX)
+	maxOutputPanel := IdxToPanel(maxIDX)
 	return maxOutputPanel
+}
+
+//Error message, error if not nil or less than 0.
+func ErrorMessage(err error, input string, variableInput float64) {
+	if err != nil { //there was a problem
+		fmt.Printf("Error: Number entered for %s was invalid.\n", input)
+	} else if variableInput <= 0 {
+		fmt.Printf("Error: Number entered for %s was less than zero.\n", input)
+	} // else no errors
 }

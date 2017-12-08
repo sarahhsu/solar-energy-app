@@ -3,6 +3,8 @@ Description: This program takes in roof and house size and creates
 a visual of the United States with color coded recommendations for
 each city.*/
 
+//This file is written by Caryn Willis.
+
 package main
 
 import (
@@ -30,29 +32,31 @@ func DisplayHouseSize(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t, err := template.ParseFiles("housesizemap.html") //Parse the html file housesizemap.html
-	if err != nil {                                    // if error
+	if err != nil {
 		log.Print("template parsing error:", err)
 	}
 
-	err = t.Execute(w, PageVars) //execute the template and pass it the PageVars struct to fill in the gaps
-	if err != nil {              // if error
-		log.Print("template executing error:", err) //log it
+	err = t.Execute(w, PageVars) //execute the template and pass it the PageVars
+	if err != nil {
+		log.Print("template executing error:", err)
 	}
 
 }
 
 //This section is where the user can look at their results based on their input.
-//It will display a map based on recommendation (based on their %of energy
+//It will display a map based on recommendation (based on their % of energy
 //covered) and also give the cities which fall into each recommendation
 //category.
 func UserInteracts(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	r.ParseForm() //Parse the page for the variables needed
 	red := "red"
 	yellow := "yellow"
 	green := "green"
 	cityData := MakeCityMap("energy.csv")
-	houseSize, _ := strconv.ParseFloat(r.Form.Get("housesizeinput"), 64)
-	roofSize, _ := strconv.ParseFloat(r.Form.Get("roofsize"), 64)
+	houseSize, err1 := strconv.ParseFloat(r.Form.Get("housesizeinput"), 64)
+	ErrorMessage(err1, "house size", houseSize)
+	roofSize, err2 := strconv.ParseFloat(r.Form.Get("roofsize"), 64)
+	ErrorMessage(err2, "roof size", roofSize)
 	heatMap := MakeColorMarkers(cityData, houseSize, roofSize)
 	mapColors := MakeColors("energy.csv", cityData, houseSize, roofSize)
 	redList := MakeList(heatMap, red)
